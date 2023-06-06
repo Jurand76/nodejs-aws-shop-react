@@ -39,12 +39,12 @@ export class StaticSite extends Construct {
             }]
         })
 
-        new s3deploy.BucketDeployment(this, "JSCC-Bucket-Deployment"), {
+        new s3deploy.BucketDeployment(this, "JSCC-Bucket-Deployment", {
             sources: [s3deploy.Source.asset("./dist")],
             destinationBucket: siteBucket, 
             distribution,
             distributionPaths: ["/*"]
-        }
+        })
     }
 }
 
