@@ -4,6 +4,7 @@ import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import { Construct } from 'constructs';
+import { CloudFrontWebDistribution, ViewerProtocolPolicy, AllowedMethods, Behavior } from 'aws-cdk-lib/aws-cloudfront';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class AwscdkStack extends cdk.Stack {
@@ -13,9 +14,9 @@ export class AwscdkStack extends cdk.Stack {
     const existingUser = iam.User.fromUserName(this, 'ExistingUser', 'epamawsuser');
 
     // Create an S3 bucket for hosting the website
-    const websiteBucket = new s3.Bucket(this, 'WebsiteBucket', {
+    const websiteBucket = new s3.Bucket(this, 'KlocekBucket', {
       websiteIndexDocument: 'index.html',
-      publicReadAccess: true, // Allow public read access to the website files
+      //publicReadAccess: true, // Allow public read access to the website files
     });
 
       // Add bucket policy to allow public read access
@@ -34,9 +35,22 @@ export class AwscdkStack extends cdk.Stack {
       destinationBucket: websiteBucket,
     });
 
-    // Output the bucket URL for easy access
-    new cdk.CfnOutput(this, 'WebsiteBucketURL', {
-      value: websiteBucket.bucketWebsiteUrl,
+    // Create a CloudFront distribution
+    const distribution = new CloudFrontWebDistribution(this, 'MyDistribution', {
+      originConfigs: [{
+        s3OriginSource: {
+            s3BucketSource: websiteBucket, 
+        },
+        behaviors: [{
+            isDefaultBehavior: true
+        }]
+      }]
+    });
+
+    // Output the CloudFront distribution domain name
+    new cdk.CfnOutput(this, 'CloudFrontURL', {
+      value: distribution.distributionDomainName,
+      description: 'URL of the deployed website via CloudFront',
     });
   }
 }
