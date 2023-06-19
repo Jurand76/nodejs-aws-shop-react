@@ -6,7 +6,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import * as iam from '@aws-cdk/aws-iam';
-import { Contruct, Stack } from '@aws-cdk/core';
+import { Construct, Stack } from '@aws-cdk/core';
 
 export class StaticSite extends Construct {
     constructor (parent: Stack, name: string) {
